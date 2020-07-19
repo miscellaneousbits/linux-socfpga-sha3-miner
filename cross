@@ -1,0 +1,6 @@
+#!/bin/bash
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && echo "script must sourced ..." && exit
+export ARCH=arm
+export MAKEFLAGS=-j8
+export CROSS_COMPILE=/usr/bin/arm-linux-gnueabi-
+export INSTALL_MOD_PATH=/tmp/dist
