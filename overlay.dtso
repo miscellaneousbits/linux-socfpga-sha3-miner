@@ -80,6 +80,16 @@
 				phandle = <0x8>;
 			};
 
+                        miner@0x100006000 {
+                                compatible = "cyr,miner-1.1", "dev,miner";
+                                reg = <0x00000001 0x00006000 0x00000080>;
+                                interrupt-parent = <0xffffffff>;
+                                interrupts = <0x0 0x2a 0x4>;
+                                clocks = <0xffffffff>;
+			//	linux,phandle = <0x9>;
+			//	phandle = <0x9>;
+                        };
+
 			ov-leds {
 				compatible = "gpio-leds";
 
@@ -132,12 +142,13 @@
 		led_pio = "/fragment@0/__overlay__/gpio@0x100003000";
 		dipsw_pio = "/fragment@0/__overlay__/gpio@0x100004000";
 		button_pio = "/fragment@0/__overlay__/gpio@0x100005000";
+		miner_0 = "/fragment@0/__overlay__/miner@0x100006000";
 	};
 
 	__fixups__ {
 		fpga_bridge0 = "/fragment@0/__overlay__:fpga-bridges:0";
 		fpga_bridge1 = "/fragment@0/__overlay__:fpga-bridges:4";
-		intc = "/fragment@0/__overlay__/serial@0x100002000:interrupt-parent:0", "/fragment@0/__overlay__/gpio@0x100004000:interrupt-parent:0", "/fragment@0/__overlay__/gpio@0x100005000:interrupt-parent:0";
+		intc = "/fragment@0/__overlay__/serial@0x100002000:interrupt-parent:0", "/fragment@0/__overlay__/gpio@0x100004000:interrupt-parent:0", "/fragment@0/__overlay__/gpio@0x100005000:interrupt-parent:0", "/fragment@0/__overlay__/miner@0x100006000:interrupt-parent:0";
 		osc1 = "/fragment@0/__overlay__/gpio@0x100005000:clocks:0";
 	};
 
@@ -156,6 +167,10 @@
 				};
 
 				gpio@0x100004000 {
+					clocks = <0x0>;
+				};
+
+				miner@0x100006000 {
 					clocks = <0x0>;
 				};
 

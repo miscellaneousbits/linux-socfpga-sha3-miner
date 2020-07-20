@@ -1,0 +1,6 @@
+config MINER_DRIVER
+tristate "miner driver"
+depends on ARM
+default y if ARM
+help
+  miner driver module.

@@ -1,9 +1,9 @@
 #!/bin/bash
 echo copying kernel
-scp arch/arm/boot/zImage overlay.dtbo jcyr@de10nano:boot
+scp arch/arm/boot/zImage overlay.dtso root@de10nano:boot
 cd /tmp/dist
 rm -rf /tmp/dist/lib/modules/*/build
 rm -rf /tmp/dist/lib/modules/*/source
 tar czf /tmp/modules.tgz *
 cd
-scp /tmp/modules.tgz jcyr@de10nano:boot
+scp /tmp/modules.tgz root@de10nano:boot
