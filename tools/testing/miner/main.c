@@ -158,7 +158,7 @@ static int mine(void)
 
     for (int i = 0; i < 8; i++)
         write_reg32(MINER_DIFF_REG + i, 0xffffffff);
-    write_reg32(MINER_DIFF_REG + 0, 0x0000000f);
+    write_reg32(MINER_DIFF_REG + 0, 0x00000007);
 
     write_reg32(MINER_CTL_REG,
         (0x01 << MINER_CTL_FIRST_SHIFT) | (0x80 << MINER_CTL_LAST_SHIFT) | MINER_CTL_RUN_MASK);
@@ -180,7 +180,7 @@ static int mine(void)
     uint64_t solution = read_reg64_le(MINER_SOLN_REG);
     write_reg32(MINER_CTL_REG, 0);
 
-    printf("Solution: %016llx (+%'llu)\n", solution, solution - start);
+    printf("Solution: %016llx (%'llu hashes)\n", solution, solution - start);
 
     if (timeout)
     {
