@@ -152,7 +152,9 @@ static int mine(void)
     }
     printf("\n");
 
-    write_reg64_be(MINER_START_REG, 0);
+    uint64_t start = ((uint64_t)rand() << 32) | rand();
+    write_reg64_be(MINER_START_REG, start);
+    printf("Start:    %016llx\n", start);
 
     for (int i = 0; i < 8; i++)
         write_reg32(MINER_DIFF_REG + i, 0xffffffff);
@@ -178,7 +180,7 @@ static int mine(void)
     uint64_t solution = read_reg64_le(MINER_SOLN_REG);
     write_reg32(MINER_CTL_REG, 0);
 
-    printf("Solution: %016llx\n", solution);
+    printf("Solution: %016llx (+%'llu)\n", solution, solution - start);
 
     if (timeout)
     {
@@ -222,10 +224,10 @@ static uint64_t rate(void)
     uint64_t start = read_reg64_le(MINER_SOLN_REG);
     write_reg32(MINER_CTL_REG,
         (0x01 << MINER_CTL_FIRST_SHIFT) | (0x80 << MINER_CTL_LAST_SHIFT) | MINER_CTL_RUN_MASK);
-    sleep(5);
+    sleep(3);
     uint64_t stop = read_reg64_le(MINER_SOLN_REG);
     write_reg32(MINER_CTL_REG, 0);
-    return (stop - start) / 5;
+    return (stop - start) / 3;
 }
 
 int main()
