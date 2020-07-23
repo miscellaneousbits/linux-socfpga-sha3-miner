@@ -6,7 +6,7 @@ STRIP   = strip
 OFLAGS = -g
 ECHO    = @
 #OFLAGS  = -O3 -flto
-INCLUDE = ../../drivers/misc/miner
+INCLUDE = ../../../drivers/misc/miner
 CFLAGS  = $(OFLAGS) -I$(INCLUDE) -Wall -fdata-sections -ffunction-sections
 LDFLAGS = $(OFLAGS) -Wl,--gc-sections -Wl,-Map,$(BIN).map
 
