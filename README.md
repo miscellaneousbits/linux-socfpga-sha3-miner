@@ -9,13 +9,8 @@ Feel free to create pull requests following the normal github process.
 
 * [Introduction](#introduction)
 * [Implementation](#implementation)
-* [Miner Component](#miner_component)
-	* [Block diagram](#block_diagram)
-	* [API](#api)
-* [Building](#building)
-   * [Prerequisites](#prerequisites)
-   * [Synthesizing](#synthesizing)
-* [Sample](#sample)
+* [User API](#user-api)
+* [Installing](#installing)
 * [Disclaimer](#disclaimer)
 
 ## Introduction
@@ -61,17 +56,19 @@ The driver models the 23 32-bit miner core registers as file /dev/miner0. It sup
 - write (must be for a length of 4 bytes)
 - poll/ppoll/select (wait for solution)
 
-### 
+Only single register reads and writes are supported.
+
+### File map
 
 | Offset | Name | Read/Write | Description|
 | --- | --- | --- | --- |
 | 0 | SOLN_REG | RO | 64-bit Solution |
-| 8 | STATUS_REG | RO | Status (see below) |
-| 12 | SHA3_REG | RO | Fingerprint "SHA3" |
+| 8 | STATUS_REG | RO | 32-bit Status (see below) |
+| 12 | SHA3_REG | RO | 32-bit Fingerprint "SHA3" |
 | 16 | HDR_REG | RW | 256-bit Header |
-| 48 | DIFF_REG | RW | 256-bit difficulty |
-| 80 | START_REG | RW | 64-bit start nonce |
-| 88 | CTL_REG | RW | Control (see below) |
+| 48 | DIFF_REG | RW | 256-bit Difficulty |
+| 80 | START_REG | RW | 64-bit Start nonce |
+| 88 | CTL_REG | RW | 32-bit Control (see below) |
 
 ### Status register
 
@@ -103,7 +100,7 @@ The driver models the 23 32-bit miner core registers as file /dev/miner0. It sup
 - DE10-NANO
 - Desk/Laptop (Windows or Linux Ubuntu/Debian) to run terminal.
 
-###
+### Download and install
 
 Download the latest release version from this project. Using dd on Linux, or Win32DiskImager on Windows,
 unzip and copy the image file a to an 8GB or greater SD card. Insert the SD card in the DE10-NANO card slot,
@@ -325,6 +322,46 @@ root@de10nano:~/linux-socfpga-sha3-miner/tools/testing/miner#
 You can also rebuild the kernel (it will take a very long time on the NANO)
 
 ```
+root@de10nano:~# cd linux-socfpga-sha3-miner/
+root@de10nano:~/linux-socfpga-sha3-miner# make zImage modules
+  CHK     include/config/kernel.release
+  CHK     include/generated/uapi/linux/version.h
+  CHK     include/generated/utsrelease.h
+  CHK     include/generated/bounds.h
+  CHK     include/generated/timeconst.h
+  CHK     include/generated/asm-offsets.h
+  CALL    scripts/checksyscalls.sh
+  CHK     scripts/mod/devicetable-offsets.h
+  CHK     include/generated/compile.h
+  CHK     kernel/config_data.h
+
+...
+
+  AS      arch/arm/boot/compressed/piggy.o
+  LD      arch/arm/boot/compressed/vmlinux
+  OBJCOPY arch/arm/boot/zImage
+  Kernel: arch/arm/boot/zImage is ready
+root@de10nano:~/linux-socfpga-sha3-miner# make modules_install 
+  INSTALL crypto/drbg.ko
+  INSTALL crypto/echainiv.ko
+  INSTALL crypto/hmac.ko
+  INSTALL crypto/jitterentropy_rng.ko
+  INSTALL crypto/sha256_generic.ko
+  INSTALL drivers/char/hw_random/rng-core.ko
+  INSTALL drivers/dma/dmatest.ko
+  INSTALL drivers/i2c/algos/i2c-algo-bit.ko
+  INSTALL drivers/misc/miner/miner.ko
+  INSTALL drivers/net/ethernet/altera/altera_tse.ko
+  INSTALL drivers/net/ethernet/intel/e1000e/e1000e.ko
+  INSTALL drivers/net/ethernet/intel/igb/igb.ko
+  INSTALL drivers/net/ethernet/intel/ixgbe/ixgbe.ko
+  INSTALL drivers/net/mdio.ko
+  DEPMOD  4.14.130-ltsi+
+root@de10nano:~/linux-socfpga-sha3-miner# mount /dev/mmcblk0p1 /media
+root@de10nano:~/linux-socfpga-sha3-miner# cp arch/arm/boot/zImage /media
+root@de10nano:~/linux-socfpga-sha3-miner# umount /media
+root@de10nano:~/linux-socfpga-sha3-miner# sync
+root@de10nano:~/linux-socfpga-sha3-miner# reboot
 ```
 
 ## Disclaimer
