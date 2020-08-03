@@ -294,7 +294,9 @@ int main()
 
     printf("Checking hash rate\n");
     uint32_t h = bitfield(STATUS, MHZ);
-    double expected = h / 3.0;
+    uint8_t stages = bitfield(STATUS, STAGES);
+
+    double expected = h / (24.0 / stages);
     printf("Miner clock %'u MHz, expected hash rate %'.2f MH/S\n", h, expected);
     double r = rate() / 1.0e6;
     int pass = fabs(r - expected) < (expected * .001);
