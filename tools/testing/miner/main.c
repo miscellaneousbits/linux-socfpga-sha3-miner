@@ -137,7 +137,7 @@ static void test(int i, uint64_t start, uint32_t poll)
     usleep(1);
 }
 
-static int mine(void)
+static int mine(int stages)
 {
     write_reg32(MINER_CTL_REG, 0);
     uint32_t block[10];
@@ -158,7 +158,18 @@ static int mine(void)
 
     for (int i = 0; i < 8; i++)
         write_reg32(MINER_DIFF_REG + i, 0xffffffff);
-    write_reg32(MINER_DIFF_REG + 0, 0x00000007);
+    switch (stages)
+    {
+    case 8:
+        write_reg32(MINER_DIFF_REG + 0, 0x00000007);
+        break;
+    case 4:
+        write_reg32(MINER_DIFF_REG + 0, 0x0000000f);
+        break;
+    case 2:
+        write_reg32(MINER_DIFF_REG + 0, 0x0000001f);
+        break;
+    }
 
     write_reg32(MINER_CTL_REG,
         (0x01 << MINER_CTL_FIRST_SHIFT) | (0x80 << MINER_CTL_LAST_SHIFT) | MINER_CTL_RUN_MASK);
@@ -297,7 +308,8 @@ int main()
     uint8_t stages = bitfield(STATUS, STAGES);
 
     double expected = h / (24.0 / stages);
-    printf("Miner clock %'u MHz, expected hash rate %'.2f MH/S\n", h, expected);
+    printf("Miner clock %'u MHz, pipeline stages %d, expected hash rate %'.2f MH/S\n", h, stages,
+        expected);
     double r = rate() / 1.0e6;
     int pass = fabs(r - expected) < (expected * .001);
     printf("Measured %'.2f MH/S, %s\n", r, pass ? "PASS" : "FAIL");
@@ -309,7 +321,7 @@ int main()
     for (int i = 1; i <= 10; i++)
     {
         printf("\nSearch %d\n", i);
-        if (mine())
+        if (mine(stages))
             break;
     }
     printf("\n");
