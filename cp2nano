@@ -1,9 +1,6 @@
 #!/bin/bash
-echo copying kernel
-scp arch/arm/boot/zImage root@de10nano:
-cd /tmp/dist
-rm -rf /tmp/dist/lib/modules/*/build
-rm -rf /tmp/dist/lib/modules/*/source
-tar czf /tmp/modules.tgz *
-cd
-scp /tmp/modules.tgz root@de10nano:
+./cleanmodules
+make modules_install
+echo copying kernel and modules
+tar -C /tmp/dist --exclude='lib/modules/*/build' --exclude='lib/modules/*/source' -czf modules.tgz lib
+scp modules.tgz arch/arm/boot/zImage root@de10nano:

@@ -217,7 +217,7 @@ static int miner_probe(struct platform_device* pdev)
         pr_info(INFO_HDR "Register device failed.\n");
         goto error_exit0;
     }
-    pr_info(INFO_HDR "Registered /dev/%s.\n", dev->misc_dev.name);
+    pr_info(INFO_HDR "/dev/%s registered.\n", dev->misc_dev.name);
 
     platform_set_drvdata(pdev, dev);
 
