@@ -143,7 +143,7 @@ static int mine(int stages)
     uint32_t block[10];
     uint32_t hash[8];
 
-    printf("Header:   ");
+    printf("Header:     ");
     for (int i = 0; i < 8; i++)
     {
         block[i] = rand();
@@ -154,7 +154,7 @@ static int mine(int stages)
 
     uint64_t start = ((uint64_t)rand() << 32) | rand();
     write_reg64_be(MINER_START_REG, start);
-    printf("Start:    %016llx\n", start);
+    printf("Start:      %016llx\n", start);
 
     for (int i = 0; i < 8; i++)
         write_reg32(MINER_DIFF_REG + i, 0xffffffff);
@@ -191,7 +191,7 @@ static int mine(int stages)
     uint64_t solution = read_reg64_le(MINER_SOLN_REG);
     write_reg32(MINER_CTL_REG, 0);
 
-    printf("Solution: %016llx (%'llu hashes)\n", solution, solution - start);
+    printf("Solution:   %016llx (%'llu hashes)\n", solution, solution - start);
 
     if (timeout)
     {
@@ -203,11 +203,11 @@ static int mine(int stages)
     block[9] = swap32(solution);
 
     sha3_HashBuffer(256, SHA3_FLAGS_KECCAK, block, sizeof(block), hash, sizeof(hash));
-    printf("Hash:     ");
+    printf("Hash:       ");
     for (int i = 0; i < 8; i++)
         printf("%08x", swap32(hash[i]));
     printf("\n");
-    printf("Diff:     ");
+    printf("Difficulty: ");
     for (int i = 0; i < 8; i++)
         printf("%08x", read_reg32(MINER_DIFF_REG + i));
     printf("\n");
@@ -270,7 +270,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    printf("\nPoll test\n");
+    printf("\nPermutation stage test\n\n");
     for (int t = 0; t < 10; t++)
     {
         uint64_t start = (uint64_t)rand() << 32 | rand();
@@ -286,7 +286,7 @@ int main()
     if (!pass)
         return -1;
 
-    printf("\nInterrupt test\n");
+    printf("\nInterrupt test\n\n");
     for (int t = 0; t < 10; t++)
     {
         uint64_t start;
@@ -303,7 +303,7 @@ int main()
     if (!pass)
         return -1;
 
-    printf("Checking hash rate\n");
+    printf("Hash rate test\n\n");
     uint32_t h = bitfield(STATUS, MHZ);
     uint8_t stages = bitfield(STATUS, STAGES);
 
@@ -312,7 +312,7 @@ int main()
         expected);
     double r = rate() / 1.0e6;
     int pass = fabs(r - expected) < (expected * .001);
-    printf("Measured %'.2f MH/S, %s\n", r, pass ? "PASS" : "FAIL");
+    printf("Measured %'.2f MH/S\n%s\n", r, pass ? "PASS" : "FAIL");
     if (!pass)
         return -1;
 
